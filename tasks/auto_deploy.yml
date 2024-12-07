@@ -1,0 +1,4 @@
+---
+- name: Deploy the applicationsets
+  loop: "{{ auto_deploy.appsets }}"
+  shell: "kubectl apply -f {{ item }}"

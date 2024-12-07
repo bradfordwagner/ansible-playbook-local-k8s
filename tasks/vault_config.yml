@@ -1,0 +1,6 @@
+---
+- name: copy vault ca to {{ ansible_env.HOME }}/.vault-ca
+  copy:
+    src: "{{ playbook_dir }}/.cache/rootCA.pem"
+    dest: "{{ ansible_env.HOME }}/.vault-ca"
+    mode: 0600

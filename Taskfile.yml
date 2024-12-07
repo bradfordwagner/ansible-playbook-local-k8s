@@ -1,0 +1,7 @@
+version: '3'
+
+tasks:
+  run_playbook:
+    desc: Run the Ansible playbook to execute gitops-toolkit role
+    cmds:
+      - ansible-playbook ./playbook.yml
