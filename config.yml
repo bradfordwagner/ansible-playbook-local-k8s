@@ -47,4 +47,4 @@ gtk_argocd:
 
 auto_deploy:
   appsets:
-    - "{{ playbook_dir }}/appsets/vault/appset.yaml"
+    - "{{ playbook_dir }}/appsets/vault.appset.yaml"
