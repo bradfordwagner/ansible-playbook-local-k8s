@@ -1,0 +1,72 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: vault
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            cluster.env:  dev
+        values:
+          env: '{{ index .metadata.labels "cluster.env" }}'
+  template:
+    metadata:
+      name: 'vault-{{ .name }}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/hashicorp/vault-helm.git
+        targetRevision: v0.29.1
+        path: .
+        helm:
+          releaseName: vault
+          values: |
+            global:
+              tlsDisable: false
+            injector:
+              enabled: true
+            server:
+              readinessProbe:
+                enabled: false
+              standalone:
+                enabled: true
+                config: |
+                  ui = true
+                  storage "file" {
+                    path = "/vault/data"
+                  }
+                  listener "tcp" {
+                    address = "[::]:8200"
+                    cluster_address = "[::]:8201"
+                    tls_cert_file = "/vault/userconfig/tls/certificate"
+                    tls_key_file  = "/vault/userconfig/tls/private_key"
+                    tls_client_ca_file = "/vault/userconfig/tls/ca"
+                  }
+              volumes:
+                 - name: tls
+                   secret:
+                    defaultMode: 420
+                    secretName: vault-tls
+              volumeMounts:
+                 - mountPath: /vault/userconfig/tls
+                   name: tls
+                   readOnly: true
+      destination:
+        server: '{{ .server }}'
+        namespace: vault
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - Validate=true
+          - RespectIgnoreDifferences=true
+      ignoreDifferences:
+          - group: '*'
+            kind: MutatingWebhookConfiguration
+            jqPathExpressions:
+              - '.webhooks[]?.clientConfig.caBundle'

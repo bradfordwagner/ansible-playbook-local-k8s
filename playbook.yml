@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  vars_files:
+    - config.yml
+  tasks:
+    - include_role:
+        name: bradfordwagner.gitops-toolkit
+    - name: auto deploy
+      include_tasks: tasks/auto_deploy.yml
+    - name: vault config
+      include_tasks: tasks/vault_config.yml

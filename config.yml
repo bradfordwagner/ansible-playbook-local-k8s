@@ -1,0 +1,50 @@
+gtk_clusters:
+  dev:
+    enabled: true
+    # https://k3d.io/v5.8.3/usage/exposing_services/?h=expos#1-via-ingress-recommended
+    k3d_extra_args:
+      - -p
+      - 8081:80@loadbalancer
+    labels:
+      cluster.env: dev
+    git_ops:
+      namespace: "{{ gtk_argocd.namespace }}"
+      port: "8080"
+      manifest_path: "{{ ansible_env.HOME }}/deploy_argocd"
+      credentials:
+        username: admin
+        password: admin1234
+      # use mkcert to create self-signed locally trusted certificates
+    certs:
+      - namespace: argocd
+        secret:
+          name: argocd-server-tls
+          key: tls.key
+          cert: tls.crt
+          ca: tls.ca
+      - namespace: vault
+        secret:
+          name: vault-tls
+          key: private_key
+          cert: certificate
+          ca: ca
+
+gtk_install_dependent_binaries: false
+
+gtk_start_clusters:
+  enabled: true
+  retries: 0
+
+gtk_argocd:
+  namespace: argocd
+  manifest:
+    dir: "{{ ansible_env.HOME }}/.gitops_toolkit/deploy_argocd"
+    sub_path: ""
+    git:
+      enabled: true
+      repo: git@github.com:bradfordwagner/deploy-argocd.git
+      version: main
+
+auto_deploy:
+  appsets:
+    - "{{ playbook_dir }}/appsets/vault.appset.yaml"
