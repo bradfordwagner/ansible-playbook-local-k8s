@@ -1,6 +1,10 @@
 gtk_clusters:
   dev:
     enabled: true
+    # https://k3d.io/v5.8.3/usage/exposing_services/?h=expos#1-via-ingress-recommended
+    k3d_extra_args:
+      - -p
+      - 8081:80@loadbalancer
     labels:
       cluster.env: dev
     git_ops:
@@ -29,6 +33,7 @@ gtk_install_dependent_binaries: false
 
 gtk_start_clusters:
   enabled: true
+  retries: 0
 
 gtk_argocd:
   namespace: argocd
