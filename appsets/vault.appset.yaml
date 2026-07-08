@@ -30,15 +30,6 @@ spec:
             server:
               injector:
                 enabled: true
-              ingress:
-                enabled: true
-                hosts:
-                  - host: localhost
-                    paths:
-                      - /vault
-                      - /ui
-                #   - host: vault.vault.svc
-                #   - host: vault.vault.svc.cluster.local
               readinessProbe:
                 enabled: false
               standalone:

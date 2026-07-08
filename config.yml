@@ -5,6 +5,8 @@ gtk_clusters:
     k3d_extra_args:
       - -p
       - 8081:80@loadbalancer
+      - --image
+      - rancher/k3s:v1.35.5-k3s1
     labels:
       cluster.env: dev
     git_ops:
@@ -42,7 +44,7 @@ gtk_argocd:
     sub_path: ""
     git:
       enabled: true
-      repo: git@github.com:bradfordwagner/deploy-argocd.git
+      repo: https://github.com/bradfordwagner/deploy-argocd.git
       version: main
 
 auto_deploy:
