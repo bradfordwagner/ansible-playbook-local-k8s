@@ -10,7 +10,7 @@ spec:
     - clusters:
         selector:
           matchLabels:
-            cluster.env:  dev
+            cluster.env: local
         values:
           env: '{{ index .metadata.labels "cluster.env" }}'
   template:
